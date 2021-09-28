@@ -11,11 +11,11 @@ namespace DevTeams_Repository
         public Developer() { }
         public Developer(string firstName, string lastName, string name, double idNumbers, bool pluralsight)
         {
-            firstName = FirstName;
-            lastName = LastName;
-            name = Name;
-            idNumbers = IDNumbers;
-            pluralsight = Pluralsight;
+            FirstName = firstName;
+            LastName = lastName;
+            Name = name;
+            IDNumbers = idNumbers;
+            Pluralsight = pluralsight;
         }
         //Names string
         public string FirstName { get; set; }

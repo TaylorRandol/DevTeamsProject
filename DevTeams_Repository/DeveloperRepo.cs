@@ -70,5 +70,12 @@ namespace DevTeams_Repository
             bool result = developers.Remove(currentInfo);
             return result;
         }
+        //Pluralsight
+        /*public List<Developer> GetPluralsight()
+        {
+            //get dev with/without pluralsight
+            foreach(Developer id in )
+            
+        }*/
     }
 }

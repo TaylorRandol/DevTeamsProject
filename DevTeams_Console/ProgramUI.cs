@@ -10,10 +10,13 @@ namespace DevTeams_Console
     class ProgramUI
     {
         private DeveloperRepo _repo = new DeveloperRepo();
+        private DevTeamRepo devTeamRepo = new DevTeamRepo();
         bool isRunning = true;
 
         public void Run()
         {
+            //SeedData();
+
             RunMenu();
         }
         //create dev 
@@ -29,19 +32,7 @@ namespace DevTeams_Console
         //delete dev team
         //pluralsight licenses
         //exit
-                    /*"Komodo Insurance\n\n" +
-                    "Create new Developer Info:\n" +
-                    "Show all Developers:\n" +
-                    "Find Specific Developer:\n" +
-                    "Update Developer Info:\n" +
-                    "Remove Developer Info:\n" +
-                    "Create new Dev Team\n" +
-                    "Show all Dev Team\n" +
-                    "Find Specific Dev Team\n" +
-                    "Update Dev Team Info:\n" +
-                    "Remove Dev Team Info:\n" +
-                    "Pluralsight License:\n" +
-                    "Exit"*/
+                    
         private void RunMenu()
         {
             while (isRunning)
@@ -87,21 +78,27 @@ namespace DevTeams_Console
                         break;
                     case "6":
                         //create new dev team
+                        AddNewTeams();
                         break;
                     case "7":
                         //show all dev teams
+                        ShowAllDevTeams();
                         break;
                     case "8":
                         //find specific dev team
+                        ShowTeam();
                         break;
                     case "9":
                         //Update dev team
+                        UpdateDevTeam();
                         break;
                     case "10":
                         //remove dev team
+                        RemoveTeamFromRepo();
                         break;
                     case "11":
                         //pluralsight
+                        Pluralsight();
                         break;
                     case "0":
                         //Exit
@@ -110,7 +107,7 @@ namespace DevTeams_Console
 
                     default:
                         //random/wrong input
-                        Console.WriteLine("Please enter a valid number between 1 and 3.");
+                        Console.WriteLine("Please enter a valid number between 0 and 11.");
                         WriteRead();
                         break;
                 }
@@ -124,59 +121,6 @@ namespace DevTeams_Console
         //Dev Teams
         //1. Create new Dev Team, 2. show all dev teams, 3. search specific dev team, 4. update dev team, 5. delete dev team
         //Dev Teams
-        private void DevTeams()
-        {
-            Console.Clear();
-            Console.WriteLine
-                (
-                "Developer Teams\n\n" +
-                "Enter the number of your selection:\n" +
-                "1. Create a new Dev Team:\n" +
-                "2. Show all current Developer Teams:\n" +
-                "3. Search specific Dev Team by Name:\n" +
-                "4. Search specific Dev Team by ID:\n" +
-                "5. Update current Dev Team Info:\n" +
-                "6. Remove current Dev Team Info:\n" +
-                "7. Return\n" +
-                "8. Exit Program"
-                );
-
-            string userInput = Console.ReadLine();
-
-            switch (userInput)
-            {
-                case "1":
-                    //Create dev team
-                    break;
-                case "2":
-                    //show all teams
-                    break;
-                case "3":
-                    //Search by name
-                    break;
-                case "4":
-                    //Search by id
-                    break;
-                case "5":
-                    //update teams
-                    break;
-                case "6":
-                    //delete team info
-                    break;
-                case "7":
-                    //return
-                    RunMenu();
-                    break;
-                case "8":
-                    //Exit
-                    isRunning = false;
-                    break;
-                default:
-                    Console.WriteLine("Please enter a valid number between 1 and 8.");
-                    WriteRead();
-                    break;
-            }
-        }
 
         //Pluralsight Licenses
         private void Pluralsight()
@@ -197,10 +141,12 @@ namespace DevTeams_Console
             switch (userInput)
             {
                 case "1":
-                    //Devs needing Licenses
+                    //Devs without Licenses
+                    DevWithout();
                     break;
                 case "2":
                     //Devs with licenses
+                    DevWith();
                     break;
                 case "3":
                     //return
@@ -215,6 +161,31 @@ namespace DevTeams_Console
                     WriteRead();
                     break;
             }
+        }
+        private void DevWithout()
+        {
+            Console.Clear();
+
+            List<Developer> listDevs = _repo.GetDevelopers();
+
+            foreach (Developer developer in listDevs)
+            {
+                DisplayDevsWithout(developer);
+            }
+            WriteRead();
+        }
+
+        private void DevWith()
+        {
+            Console.Clear();
+
+            List<Developer> listDevs = _repo.GetDevelopers();
+
+            foreach (Developer developer in listDevs)
+            {
+                DisplayDevsWith(developer);
+            }
+            WriteRead();
         }
 
         //Creating Content
@@ -514,6 +485,179 @@ namespace DevTeams_Console
             WriteRead();
         }
 
+        //Create DevTeams
+        private void AddNewTeams()
+        {
+            Console.Clear();
+
+            DevTeams devTeams = new DevTeams();
+            List<DevTeams> teams = new List<DevTeams>();
+
+            //TeamName
+            Console.WriteLine("Please enter a Team Name:");
+            devTeams.TeamName = Console.ReadLine();
+
+            //TeamID
+            Console.WriteLine("Please enter an ID for the Team:");
+            devTeams.TeamID = Convert.ToDouble(Console.ReadLine());
+
+            devTeamRepo.AddToTeamDirectory(devTeams);
+        }
+
+        //Show All DevTeams
+        private void ShowAllDevTeams()
+        {
+            Console.Clear();
+
+            List<DevTeams> devTeamsList = devTeamRepo.GetDevTeams();
+
+            foreach (DevTeams devs in devTeamsList)
+            {
+                DisplayTeams(devs);
+            }
+            WriteRead();
+        }
+
+
+        //Find specific team
+        private void ShowTeam()
+        {
+            Console.Clear();
+
+            Console.WriteLine("Enter the number of your selection:\n" +
+                "1. Search by Team Name\n" +
+                "2. Search by Team ID");
+
+            string userInput = Console.ReadLine();
+            switch (userInput)
+            {
+                case "1":
+                    ShowTeamName();
+                    break;
+                case "2":
+                    ShowTeamID();
+                    break;
+            }
+        }
+        //Read Team Name
+        private void ShowTeamName()
+        {
+            Console.Clear();
+
+            Console.WriteLine("What's the Name of the Team you are looking for?\n" +
+                "Team Name:");
+            string name = Console.ReadLine();
+
+            DevTeams devTeams = devTeamRepo.GetTeamByName(name);
+
+            if (devTeams != null)
+            {
+                DisplayTeams(devTeams);
+            }
+            else
+            {
+                Console.WriteLine("Unfortunately, we don't have that Team on file.");
+            }
+            WriteRead();
+        }
+        //Read Team ID
+        private void ShowTeamID()
+        {
+            Console.Clear();
+
+            Console.WriteLine("What's the ID of the Team you are looking for?\n" +
+                "Team ID:");
+            double id = Convert.ToDouble(Console.ReadLine());
+
+            DevTeams devTeams = devTeamRepo.GetTeamByID(id);
+
+            if (devTeams != null)
+            {
+                DisplayTeams(devTeams);
+            }
+            else
+            {
+                Console.WriteLine("Unfortunately, we don't have that Team on file.");
+            }
+            WriteRead();
+        }
+        //Update DevTeam
+        private void UpdateDevTeam()
+        {
+            Console.Clear();
+
+            Console.WriteLine("What is the name of the team you want to update?");
+            string targetName = Console.ReadLine();
+
+            DevTeams targetDev = devTeamRepo.GetTeamByName(targetName);
+
+            if (targetDev == null)
+            {
+                Console.WriteLine("We are unable to find that Team.");
+                WriteRead();
+                return;
+            }
+            DevTeams teamUP = new DevTeams();
+
+            //Updated Name
+            Console.WriteLine($"Original Team Name: {targetDev.TeamName}\n" +
+                $"Please enter a new Team Name: ");
+            teamUP.TeamName = Console.ReadLine();
+            //Updated ID Number
+            Console.WriteLine($"Original Team ID: {targetDev.TeamID}\n" +
+                $"Plese enter a new Team ID Number: ");
+            teamUP.TeamID = Convert.ToDouble(Console.ReadLine());
+
+            if (devTeamRepo.UpdateDevTeam(targetDev, teamUP))
+            {
+                Console.WriteLine("Update successful");
+            }
+            else
+            {
+                Console.WriteLine("Update failed");
+            }
+            WriteRead();
+        }
+
+        //Remove DevTeam
+        private void RemoveTeamFromRepo()
+        {
+            Console.Clear();
+
+            List<DevTeams> devTeams = devTeamRepo.GetDevTeams();
+
+            int index = 1;
+            foreach (DevTeams teams in devTeams)
+
+            {
+                Console.WriteLine($"{index}. {teams.TeamName}");
+                index++;
+            }
+
+            Console.WriteLine("What Developer would you like to remove?");
+            int targetName = int.Parse(Console.ReadLine());
+            int targetIndex = targetName - 1;
+
+            if (targetIndex >= 0 && targetIndex < devTeams.Count)
+            {
+                DevTeams targetDev = devTeams[targetIndex];
+
+                if (devTeamRepo.DeleteDevTeams(targetDev))
+                { 
+                    Console.WriteLine($"{targetDev.TeamName} was successfully deleted.");
+                }
+                else
+                {
+                    Console.WriteLine("Oh no, something went wrong.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("That is not a valid selection");
+            }
+            WriteRead();
+        }
+
         //Helper Methods
         private void WriteRead()
         {
@@ -529,9 +673,42 @@ namespace DevTeams_Console
                 $"Pluralsight License: {developer.Pluralsight}\n");
         }
 
-        private void ReturnDev()
+        private void DisplayTeams(DevTeams devs)
         {
-
+            Console.WriteLine(
+                $"Team Name: {devs.TeamName}\n" +
+                $"Team ID: {devs.TeamID}\n");
         }
+
+        private void DisplayDevsWithout(Developer developer)
+        {
+            if(developer.Pluralsight == false)
+            {
+                Console.WriteLine($"Name: {developer.Name}\n" +
+                    $"ID: {developer.IDNumbers}");
+            }
+        }
+
+        private void DisplayDevsWith(Developer developer)
+        {
+            if(developer.Pluralsight ==true)
+            {
+                Console.WriteLine($"Name: {developer.Name}\n" +
+                    $"ID: {developer.IDNumbers}");
+            }
+        }
+
+        /*private void SeedData()
+        {
+            Developer nameOne = new Developer("Taylor", "Randol", "Taylor Randol", 1234567890d, true);
+            Developer nameTwo = new Developer("Luke", "Randol", "Luke Randol", 0987654321, true);
+            Developer nameThree = new Developer("John", "Doe", "John Doe", 000000001, false);
+            Developer nameFour = new Developer("Bob", "Bobbers", "Bob Bobbers", 111111111, false);
+
+            _repo.AddToDirectory(nameOne);
+            _repo.AddToDirectory(nameTwo);
+            _repo.AddToDirectory(nameThree);
+            _repo.AddToDirectory(nameFour);
+        }*/
     }
 }

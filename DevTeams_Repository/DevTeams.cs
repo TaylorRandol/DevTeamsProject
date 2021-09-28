@@ -9,8 +9,16 @@ namespace DevTeams_Repository
     public class DevTeams
     {
         public DevTeams() { }
+        public DevTeams(List<Developer> developers, string teamMembers, string teamName, double teamID)
+        {
+            Developers = developers;
+            TeamMembers = teamMembers;
+            TeamName = teamName;
+            TeamID = teamID;
+        }
+        public List<Developer> Developers { get; set; }
         //Team members--ie Developers
-        public List<Developer> DevTeam { get; set; }
+        public string TeamMembers { get; set; }
 
         //Team Name string
         public string TeamName { get; set; }
